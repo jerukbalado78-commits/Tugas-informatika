@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Presensi Digital SMA Ruteng</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f6f9;
+    }
+    header {
+      background: #1E90FF;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    .form-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 25px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #1E90FF;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #0b65c2;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+      border: 1px solid #ccc; /* garis tabel */
+    }
+    th {
+      background: #1E90FF;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+
+  <header>📘 Presensi Digital SMA di Ruteng</header>
+
+  <div class="container">
+    <div class="form-card">
+      <div class="form-group">
+        <label for="sekolah">Nama Sekolah:</label>
+        <input type="text" id="sekolah" placeholder="Masukkan Nama Sekolah">
+      </div>
+
+      <div class="form-group">
+        <label for="nama">Nama Siswa:</label>
+        <input type="text" id="nama" placeholder="Masukkan Nama Siswa">
+      </div>
+
+      <div class="form-group">
+        <label for="kelas">Kelas:</label>
+        <select id="kelas"></select>
+      </div>
+
+      <div class="form-group">
+        <label for="keterangan">Keterangan:</label>
+        <select id="keterangan">
+          <option>Hadir</option>
+          <option>Sakit</option>
+          <option>Izin</option>
+          <option>Alpa</option>
+        </select>
+      </div>
+
+      <button onclick="absen()">✅ Absen Sekarang</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Sekolah</th>
+          <th>Nama</th>
+          <th>Kelas</th>
+          <th>Keterangan</th>
+          <th>Tanggal</th>
+          <th>Waktu</th>
+        </tr>
+      </thead>
+      <tbody id="tabelPresensi"></tbody>
+    </table>
+  </div>
+
+  <script>
+    let nomor = 1;
+    const bulanIndo = [
+      "Januari","Februari","Maret","April","Mei","Juni",
+      "Juli","Agustus","September","Oktober","November","Desember"
+    ];
+    const hariIndo = [
+      "Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"
+    ];
+
+    // Generate kelas otomatis (X, XI, XII) A-Z
+    const kelasSelect = document.getElementById("kelas");
+    const romawi = ["X", "XI", "XII"];
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    romawi.forEach(r => {
+      alphabet.forEach(a => {
+        let option = document.createElement("option");
+        option.value = `${r} ${a}`;
+        option.textContent = `${r} ${a}`;
+        kelasSelect.appendChild(option);
+      });
+    });
+
+    function absen() {
+      const sekolah = document.getElementById("sekolah").value.trim();
+      const nama = document.getElementById("nama").value.trim();
+      const kelas = document.getElementById("kelas").value;
+      const keterangan = document.getElementById("keterangan").value;
+
+      if (sekolah === "" || nama === "") {
+        alert("⚠️ Harap lengkapi semua data!");
+        return;
+      }
+
+      const now = new Date();
+      const hari = hariIndo[now.getDay()];
+      const tanggal = now.getDate();
+      const bulan = bulanIndo[now.getMonth()];
+      const tahun = now.getFullYear();
+      const waktu = now.toLocaleTimeString("id-ID");
+
+      const fullTanggal = `${hari}, ${tanggal} ${bulan} ${tahun}`;
+
+      const tabel = document.getElementById("tabelPresensi");
+      const row = tabel.insertRow();
+
+      row.insertCell(0).innerText = nomor++;
+      row.insertCell(1).innerText = sekolah;
+      row.insertCell(2).innerText = nama;
+      row.insertCell(3).innerText = kelas;
+      row.insertCell(4).innerText = keterangan;
+      row.insertCell(5).innerText = fullTanggal;
+      row.insertCell(6).innerText = waktu;
+
+      // reset input
+      document.getElementById("sekolah").value = "";
+      document.getElementById("nama").value = "";
+      document.getElementById("kelas").value = "";
+      document.getElementById("keterangan").value = "Hadir";
+    }
+  </script>
+
+</body>
+</html>
